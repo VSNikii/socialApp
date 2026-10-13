@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-
+import PostCard from '@/myComponents/PostCard';
 
 
 
@@ -30,8 +30,7 @@ export default function Index() {
   return (
     <View style={styles.postCard}>
       <View style={styles.postHeader}>
-        <Text style={styles.authorText}>Никита</Text>
-        <Text style={styles.dateText}>только что</Text>
+        <PostCard/>
       </View>
       <Text style={styles.postText}>{ }</Text>
     </View>
@@ -40,7 +39,7 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   postCard: {
-    backgroundColor: '#1e1e1e', // Темный фон карточки
+    backgroundColor: '#ffffff', // Темный фон карточки
     padding: 16,               // Внутренние отступы со всех сторон
     borderRadius: 12,          // Скругленные углы
     marginBottom: 12,          // Отступ снизу до следующего поста
