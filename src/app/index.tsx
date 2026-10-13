@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import PostCard from '@/myComponents/PostCard';
+import Feed from '@/myComponents/Feed';
 
 
 
@@ -30,7 +31,7 @@ export default function Index() {
   return (
     <View style={styles.postCard}>
       <View style={styles.postHeader}>
-        <PostCard/>
+        <Feed/>
       </View>
       <Text style={styles.postText}>{ }</Text>
     </View>

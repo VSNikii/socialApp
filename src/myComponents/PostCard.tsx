@@ -2,18 +2,19 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
-export default function PostCard() {
+export default function PostCard(props: any) {
+    const {urlIconProf, urlIconPost, nickname, theme, date, textPost, textHead} = props
     return (
         <View style={styles.card}>
             {/* Шапка поста: Аватар, имя, категория/время и кнопка опций */}
             <View style={styles.header}>
                 <Image 
-                    source={{ uri: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100' }} 
+                    source={{ uri: urlIconProf }} 
                     style={styles.avatar} 
                 />
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.nickname} numberOfLines={1}>Аня Мир</Text>
-                    <Text style={styles.subInfo}>Живопись · 25 мин назад</Text>
+                    <Text style={styles.nickname} numberOfLines={1}>{nickname}</Text>
+                    <Text style={styles.subInfo}>{theme}{date}</Text>
                 </View>
                 <TouchableOpacity>
                     <Feather name="more-horizontal" size={20} color="#6b7280" />
@@ -22,16 +23,16 @@ export default function PostCard() {
 
             {/* Основная картинка поста */}
             <Image 
-                source={{ uri: 'https://cs14.pikabu.ru/post_img/big/2023/01/22/7/167438532119863831.png' }} 
+                source={{ uri: urlIconPost }} 
                 style={styles.postImage} 
             />
 
             {/* Заголовок */}
-            <Text style={styles.title}>Пока город спит</Text>
+            <Text style={styles.title}>{textHead}</Text>
 
             {/* Текст описания */}
             <Text style={styles.description}>
-                Собрала утро из любимых цветов. Гуашь, бумага и немного тишины.
+                {textPost}
             </Text>
 
             {/* Нижняя панель действий (Лайки, комменты, закладка) */}
