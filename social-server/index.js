@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { Client } = require('pg');
+const { Pool } = require('pg');
 const cors = require('cors');
 
 const app = express();
@@ -10,41 +10,45 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Настройки подключения к твоей локальной базе данных
-export const client = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: Number(process.env.DB_PORT),
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL
 });
 
+
+
+// Настройки подключения к твоей локальной базе данных
 
 // Подключаемся к базе при старте сервера
 
 async function run(){
     try{
-        await client.connect();
+        await pool.connect();
+        console.log('Connected');
+        
+        
     }
     catch(err){
-        console.error('Error from run' + err);
-        
+        console.error('Error from run ' + err);
     }
 }
 
 run();
 
 
+
 // 1. Эндпоинт для получения всех постов (GET)
 app.get('/', async (req, res) => {
     try {
-        const result = await client.query('SELECT * FROM posts');
+        const result = await pool.query('SELECT * FROM posts');
         return res.json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Ошибка сервера при получении постов' });
     }
 });
+
+
+module.exports = pool;
 
 // 2. Эндпоинт для создания нового поста (POST)
 // app.post('/posts', async (req, res) => {
