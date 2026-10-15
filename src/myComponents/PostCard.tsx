@@ -1,30 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
 export default function PostCard(props: any) {
-    const {urlIconProf, urlIconPost, nickname, theme, date, textPost, textHead} = props
+    const { urlIconProf, urlIconPost, nickname, theme, date, textPost, textHead } = props
+    const [isLiked, setIsLiked] = useState(false);
+    const [isFav, setIsFav] = useState(false);
+    const [isVisibleSettingsPost, setIsVisibleSettingsPost] = useState(true);
+
+    const onPressLiked = () => {
+        try {
+            setIsLiked(!isLiked);
+        }
+        catch (err) {
+            console.log('Error from onPressLiked: ', err);
+
+        }
+    }
+    const onPressFav = () => {
+        try {
+            setIsFav(!isFav);
+        }
+        catch (err) {
+            console.log('Error from onPressFav: ', err);
+
+        }
+    }
+
+    const onPressSettingsPost = () => {
+        try {
+            setIsVisibleSettingsPost(!isVisibleSettingsPost);
+        }
+        catch (err) {
+            console.log('Error from onPressFav: ', err);
+        }
+    }
+
     return (
         <View style={styles.card}>
             {/* Шапка поста: Аватар, имя, категория/время и кнопка опций */}
             <View style={styles.header}>
-                <Image 
-                    source={{ uri: urlIconProf }} 
-                    style={styles.avatar} 
+                <Image
+                    source={{ uri: urlIconProf }}
+                    style={styles.avatar}
                 />
                 <View style={styles.headerTextContainer}>
                     <Text style={styles.nickname} numberOfLines={1}>{nickname}</Text>
                     <Text style={styles.subInfo}>{theme}{date}</Text>
                 </View>
                 <TouchableOpacity>
-                    <Feather name="more-horizontal" size={20} color="#6b7280" />
+                    <Feather name="more-horizontal" size={20} color="#6b7280" onPress={onPressSettingsPost} />
                 </TouchableOpacity>
+                {isVisibleSettingsPost && (
+                    <View style={styles.miniModalPostOptions}>
+                        <TouchableOpacity style={styles.optionItem}>
+                            <Text style={styles.optionText}>Скачать</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.optionItem}>
+                            <Text style={styles.optionText}>Поделиться</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.optionItem}>
+                            <Text style={[styles.optionText, { color: '#ef4444' }]}>Пожаловаться</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
 
             {/* Основная картинка поста */}
-            <Image 
-                source={{ uri: urlIconPost }} 
-                style={styles.postImage} 
+            <Image
+                source={{ uri: urlIconPost }}
+                style={styles.postImage}
             />
 
             {/* Заголовок */}
@@ -38,18 +83,18 @@ export default function PostCard(props: any) {
             {/* Нижняя панель действий (Лайки, комменты, закладка) */}
             <View style={styles.footer}>
                 <View style={styles.actionsLeft}>
-                    <TouchableOpacity style={styles.actionButton}>
-                        <Ionicons name="heart-outline" size={22} color="#4b5563" />
+                    <View style={styles.actionButton}>
+                        <Ionicons onPress={onPressLiked} size={22} color={isLiked ? "#ef4444" : "#4b5563"} name={isLiked ? 'heart' : 'heart-outline'} />
                         <Text style={styles.actionText}>128</Text>
-                    </TouchableOpacity>
+                    </View>
                     <TouchableOpacity style={styles.actionButton}>
                         <Ionicons name="chatbubble-outline" size={20} color="#4b5563" />
                         <Text style={styles.actionText}>12</Text>
                     </TouchableOpacity>
                 </View>
-                
+
                 <TouchableOpacity>
-                    <Feather name="bookmark" size={20} color="#4b5563" />
+                    <Ionicons name={isFav ? "bookmark" : "bookmark-outline"} size={20} color={isFav ? "#eab308" : "#4b5563"} onPress={onPressFav} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -136,4 +181,28 @@ const styles = StyleSheet.create({
         color: '#4b5563',
         fontWeight: '500',
     },
+    miniModalPostOptions: {
+    position: 'absolute',
+    top: 35, // Смещение под кнопку настроек
+    right: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingVertical: 6,
+    width: 150,
+    // Тени для объема (чтобы выглядело как поп-ап)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5, // Для Android
+    zIndex: 10,   // Чтобы окно было поверх других элементов карточки
+  },
+  optionItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  optionText: {
+    fontSize: 14,
+    color: '#1f2937',
+  },
 });
