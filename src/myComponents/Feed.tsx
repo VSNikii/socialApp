@@ -5,21 +5,24 @@ import {
     View,
     TouchableOpacity,
     ScrollView,
-    SafeAreaView
 } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import PostCard from './PostCard';
 
 const CATEGORIES = ['Всё', 'Искусство', 'Музыка', 'Тексты'];
 
+// Фиксированные отступы вместо safe area. Подгоняйте под себя:
+const TOP_PADDING = 56;     // под вырез / Dynamic Island (меньше -> логотип выше)
+const BOTTOM_PADDING = 24;  // под жестовую полосу (меньше -> панель ниже по высоте)
+
 export default function FeedScreen() {
     const [activeTab, setActiveTab] = useState('forYou');
     const [selectedCategory, setSelectedCategory] = useState('Всё');
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* 1. Верхний бар с логотипом и иконками */}
-            <View style={styles.topBar}>
+            <View style={[styles.topBar, { paddingTop: TOP_PADDING }]}>
                 <Text style={styles.logo}>искра<Text style={styles.dot}>.</Text></Text>
                 <View style={styles.topIcons}>
                     <TouchableOpacity style={styles.iconBtn}>
@@ -31,14 +34,19 @@ export default function FeedScreen() {
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                {/* 2. Заголовок и подзаголовок */}
+            {/* 2. Лента с постами */}
+            <ScrollView
+                style={styles.scroll}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+            >
+                {/* Заголовок и подзаголовок */}
                 <View style={styles.headerTitleContainer}>
                     <Text style={styles.mainTitle}>Твоё вдохновение</Text>
                     <Text style={styles.subtitle}>Новые голоса. Свежие идеи. Каждый день.</Text>
                 </View>
 
-                {/* 3. Переключатели: Для тебя / Подписки */}
+                {/* Переключатели: Для тебя / Подписки */}
                 <View style={styles.tabsContainer}>
                     <TouchableOpacity
                         onPress={() => setActiveTab('forYou')}
@@ -61,7 +69,7 @@ export default function FeedScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* 4. Горизонтальный скролл фильтров */}
+                {/* Горизонтальный скролл фильтров */}
                 <View style={styles.categoriesWrapper}>
                     <ScrollView
                         horizontal
@@ -85,7 +93,7 @@ export default function FeedScreen() {
                     </ScrollView>
                 </View>
 
-                {/* 5. Лента с постами */}
+                {/* Посты */}
                 <View style={styles.feedContainer}>
                     <PostCard
                         urlIconProf={'https://bipbap.ru/wp-content/uploads/2021/07/1525256972_15.jpg'}
@@ -126,10 +134,10 @@ export default function FeedScreen() {
                 </View>
             </ScrollView>
 
-            {/* 6. Нижняя панель навигации */}
-            <View style={styles.bottomNav}>
+            {/* 3. Нижняя панель */}
+            <View style={[styles.bottomNav, { paddingBottom: BOTTOM_PADDING }]}>
                 <TouchableOpacity style={styles.navItem}>
-                    <Ionicons name="home-outline" size={24} color="#2563eb" />
+                    <Ionicons name="home" size={24} color="#2563eb" />
                     <Text style={[styles.navText, styles.activeNavText]}>Лента</Text>
                 </TouchableOpacity>
 
@@ -142,7 +150,7 @@ export default function FeedScreen() {
                     <Text style={styles.navText}>Профиль</Text>
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -156,7 +164,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 10,
+        paddingBottom: 10,
         backgroundColor: '#f8fafc',
     },
     logo: {
@@ -174,8 +182,8 @@ const styles = StyleSheet.create({
     iconBtn: {
         padding: 4,
     },
-    scrollContent: {
-        paddingBottom: 100,
+    scroll: {
+        flex: 1,
     },
     headerTitleContainer: {
         paddingHorizontal: 16,
@@ -251,16 +259,20 @@ const styles = StyleSheet.create({
     bottomNav: {
         position: 'absolute',
         bottom: 0,
-        left: 0,
         right: 0,
-        height: 65,
+        left: 0,
+        paddingTop: 8,
         backgroundColor: '#ffffff',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         borderTopWidth: 1,
         borderTopColor: '#e2e8f0',
-        paddingBottom: 5,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
     },
     navItem: {
         alignItems: 'center',
@@ -277,13 +289,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     addButton: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         backgroundColor: '#2563eb',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 12,
         shadowColor: '#2563eb',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
