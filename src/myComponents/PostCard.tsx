@@ -6,7 +6,7 @@ export default function PostCard(props: any) {
     const { urlIconProf, urlIconPost, nickname, theme, date, textPost, textHead } = props
     const [isLiked, setIsLiked] = useState(false);
     const [isFav, setIsFav] = useState(false);
-    const [isVisibleSettingsPost, setIsVisibleSettingsPost] = useState(true);
+    const [isVisibleSettingsPost, setIsVisibleSettingsPost] = useState(false);
 
     const onPressLiked = () => {
         try {

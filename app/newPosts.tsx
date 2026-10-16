@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  Image, 
-  ScrollView, 
-  StyleSheet, 
-  SafeAreaView 
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
-export default function NewPostScreen() {
+export default function NewPosts() {
   const [format, setFormat] = useState('Искусство');
-  const [title, setTitle] = useState('Пока город спит');
-  const [description, setDescription] = useState('Собрала утро из любимых цветов. Гуашь, бумага и немного тишины.');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>

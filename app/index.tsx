@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import Feed from '@/myComponents/Feed';
+import Feed from './Feed';
 
 export default function Index() {
   const [posts, setPosts] = useState([]);

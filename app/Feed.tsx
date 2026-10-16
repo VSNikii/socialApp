@@ -7,7 +7,9 @@ import {
     ScrollView,
 } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
-import PostCard from './PostCard';
+import PostCard from '../src/myComponents/PostCard';
+import NewPosts from './newPosts';
+import { useRouter } from 'expo-router';
 
 const CATEGORIES = ['Всё', 'Искусство', 'Музыка', 'Тексты'];
 
@@ -18,6 +20,12 @@ const BOTTOM_PADDING = 24;  // под жестовую полосу (меньш�
 export default function FeedScreen() {
     const [activeTab, setActiveTab] = useState('forYou');
     const [selectedCategory, setSelectedCategory] = useState('Всё');
+    const router = useRouter();
+
+    const onPressAddPost = () => {
+        router.push('./newPosts');
+    }
+
 
     return (
         <View style={styles.container}>
@@ -141,8 +149,8 @@ export default function FeedScreen() {
                     <Text style={[styles.navText, styles.activeNavText]}>Лента</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.addButton}>
-                    <Ionicons name="add" size={28} color="#ffffff" />
+                <TouchableOpacity style={styles.addButton} onPress={onPressAddPost}>
+                    <Ionicons name="add" size={28} color="#ffffff"/>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem}>
