@@ -1,4 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import {
   Image,
@@ -15,6 +16,24 @@ export default function NewPosts() {
   const [format, setFormat] = useState('Искусство');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [imageData, setImageData] = useState<ImagePicker.ImagePickerAsset | null>(null);
+
+  const onPressAddImage = async () => {
+    const permissionRes = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionRes) {
+      alert('Нужен доступ к галерее, чтобы выбрать фото!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      quality: 0.8
+    });
+    if (!result.canceled) {
+      setImageData(result.assets[0])
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,17 +43,17 @@ export default function NewPosts() {
           <Ionicons name="arrow-back" size={22} color="#1f2937" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Новый пост</Text>
-        <Text style={styles.brandText}>искра<Text style={{color: '#2563eb'}}>.</Text></Text>
+        <Text style={styles.brandText}>искра<Text style={{ color: '#2563eb' }}>.</Text></Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         {/* Формат публикации */}
         <Text style={styles.label}>Формат публикации</Text>
         <View style={styles.tabsContainer}>
           {['Искусство', 'Музыка', 'Текст'].map((item) => (
-            <TouchableOpacity 
-              key={item} 
+            <TouchableOpacity
+              key={item}
               style={[styles.tab, format === item && styles.activeTab]}
               onPress={() => setFormat(item)}
               activeOpacity={0.8}
@@ -47,30 +66,58 @@ export default function NewPosts() {
         </View>
 
         {/* Карточка превью файла */}
-        <View style={styles.fileCard}>
-          <View style={styles.imageContainer}>
-            {/* Сюда можно подставить локальный файл или URL картинки */}
-            <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500' }} 
-              style={styles.previewImage} 
-            />
-            <TouchableOpacity style={styles.closeButton} activeOpacity={0.8}>
-              <Ionicons name="close" size={16} color="#1f2937" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.fileInfoRow}>
-            <Text style={styles.fileNameText} numberOfLines={1}>
-              Город_утро.jpg <Text style={styles.fileSizeText}>· 2,4 МБ</Text>
-            </Text>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.replaceText}>Заменить</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {imageData === null ?
+          (<View style={styles.card}>
+            {/* Верхняя зона загрузки */}
+            <View style={styles.uploadArea}>
+              <View style={styles.iconCircle}>
+                <Feather name="upload" size={24} color="#2563eb" />
+              </View>
+
+              <Text style={styles.title}>Добавьте работу</Text>
+              <Text style={styles.subtitle}>
+                Перетащите файл сюда или выберите его из галереи
+              </Text>
+
+              <TouchableOpacity style={styles.uploadButton}  onPress={onPressAddImage} activeOpacity={0.85}>
+                <Feather name="upload" size={18} color="#ffffff" style={styles.buttonIcon} />
+                <Text style={styles.uploadButtonText}>Выбрать файл</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Пунктирный разделитель */}
+            <View style={styles.dashedDivider} />
+
+            {/* Нижняя панель */}
+            <View style={styles.footer2}>
+              <Text style={styles.infoText}>JPG, PNG, GIF до 10 МБ</Text>
+              <TouchableOpacity activeOpacity={0.7}>
+                <Text style={styles.actionText}>Добавить</Text>
+              </TouchableOpacity>
+            </View>
+          </View>)
+          :
+          (<View style={styles.fileCard}>
+            <View style={styles.imageContainer}>
+              <TouchableOpacity style={styles.closeButton} activeOpacity={0.8} onPress={() => setImageData(null)}>
+                <Ionicons name="close" size={16} color="#1f2937" />
+              </TouchableOpacity>
+              <Image source={{uri: imageData.uri}} width={350} height={250}/>
+            </View>
+            <View style={styles.fileInfoRow}>
+              <Text style={styles.fileNameText} numberOfLines={1}>
+               {imageData.fileName}<Text style={styles.fileSizeText}>{imageData.fileSize}</Text>
+              </Text>
+              <TouchableOpacity activeOpacity={0.7} >
+                <Text style={styles.replaceText} onPress={onPressAddImage}>Заменить</Text>
+              </TouchableOpacity>
+            </View>
+          </View>)}
+
 
         {/* Название работы */}
         <Text style={styles.label}>Название работы</Text>
-        <TextInput 
+        <TextInput
           style={styles.input}
           value={title}
           onChangeText={setTitle}
@@ -80,7 +127,7 @@ export default function NewPosts() {
 
         {/* Описание */}
         <Text style={styles.label}>Описание</Text>
-        <TextInput 
+        <TextInput
           style={[styles.input, styles.textArea]}
           value={description}
           onChangeText={setDescription}
@@ -191,7 +238,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#0084ff',
     borderRadius: 16,
     width: 32,
     height: 32,
@@ -202,6 +249,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
+    zIndex: 1,
   },
   fileInfoRow: {
     flexDirection: 'row',
@@ -263,5 +311,80 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#94a3b8',
     marginTop: 8,
+  },
+  card: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    overflow: 'hidden',
+    width: '100%',
+  },
+  uploadArea: {
+    alignItems: 'center',
+    paddingVertical: 28,
+    paddingHorizontal: 20,
+  },
+  iconCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#eff6ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#64748b',
+    textAlign: 'center',
+    marginBottom: 18,
+    lineHeight: 18,
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2563eb',
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 10,
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  uploadButtonText: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  dashedDivider: {
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderStyle: 'dashed',
+    marginHorizontal: -2,
+  },
+  footer2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#f8fafc',
+  },
+  infoText: {
+    fontSize: 13,
+    color: '#64748b',
+  },
+  actionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563eb',
   },
 });
