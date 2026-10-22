@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
+    ScrollView,
     StyleSheet,
     Text,
-    View,
     TouchableOpacity,
-    ScrollView,
+    View,
 } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
 import PostCard from '../src/myComponents/PostCard';
-import NewPosts from './newPosts';
-import { useRouter } from 'expo-router';
 
 const CATEGORIES = ['Всё', 'Искусство', 'Музыка', 'Тексты'];
 
@@ -21,6 +20,7 @@ export default function FeedScreen() {
     const [activeTab, setActiveTab] = useState('forYou');
     const [selectedCategory, setSelectedCategory] = useState('Всё');
     const router = useRouter();
+
 
     const onPressAddPost = () => {
         router.push('./newPosts');

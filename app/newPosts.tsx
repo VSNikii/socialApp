@@ -1,5 +1,8 @@
+import { useCreatePost } from '@/hooks/UseCreatePost/use-create-post';
+import { VisibilityModal, VisibilityOption } from '@/myComponents/VisibilityPosts';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   Image,
@@ -17,29 +20,64 @@ export default function NewPosts() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageData, setImageData] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const router = useRouter();
+  const [visibility, setVisibility] = useState<VisibilityOption>('public');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { createPost, isLoading } = useCreatePost();
+
+
+
+
+
+
+
+  const OnPressPublishBtn = async () => {
+    try {
+      const allDataPost = {
+        username: 'user',
+        title: title,
+        des: description,
+        visibility: visibility,
+        filter: format
+      }
+      await createPost(allDataPost, imageData)
+      alert('Пост успешно создан!')
+    }
+
+    catch (err) {
+      alert("Не удалось создать пост");
+    }
+  };
+
+  const onPressBackButton = () => {
+    router.push('./Feed');
+  }
 
   const onPressAddImage = async () => {
     const permissionRes = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionRes) {
       alert('Нужен доступ к галерее, чтобы выбрать фото!');
-      return;
+      // здесь пересмотреть потом как нибудь
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      quality: 0.8
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // <--- Вот эта строчка заставляет iOS конвертировать HEIC в JPEG
+      quality: 0.8,         // <--- И сжимает по качеству до нормального веса
     });
     if (!result.canceled) {
       setImageData(result.assets[0])
     }
+
+
   }
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Шапка */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.backButton} activeOpacity={0.7} onPress={onPressBackButton}>
           <Ionicons name="arrow-back" size={22} color="#1f2937" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Новый пост</Text>
@@ -79,7 +117,7 @@ export default function NewPosts() {
                 Перетащите файл сюда или выберите его из галереи
               </Text>
 
-              <TouchableOpacity style={styles.uploadButton}  onPress={onPressAddImage} activeOpacity={0.85}>
+              <TouchableOpacity style={styles.uploadButton} onPress={onPressAddImage} activeOpacity={0.85}>
                 <Feather name="upload" size={18} color="#ffffff" style={styles.buttonIcon} />
                 <Text style={styles.uploadButtonText}>Выбрать файл</Text>
               </TouchableOpacity>
@@ -102,11 +140,11 @@ export default function NewPosts() {
               <TouchableOpacity style={styles.closeButton} activeOpacity={0.8} onPress={() => setImageData(null)}>
                 <Ionicons name="close" size={16} color="#1f2937" />
               </TouchableOpacity>
-              <Image source={{uri: imageData.uri}} width={350} height={250}/>
+              <Image source={{ uri: imageData.uri }} width={350} height={250} />
             </View>
             <View style={styles.fileInfoRow}>
               <Text style={styles.fileNameText} numberOfLines={1}>
-               {imageData.fileName}<Text style={styles.fileSizeText}>{imageData.fileSize}</Text>
+                {imageData.fileName}<Text style={styles.fileSizeText}>{imageData.fileSize}</Text>
               </Text>
               <TouchableOpacity activeOpacity={0.7} >
                 <Text style={styles.replaceText} onPress={onPressAddImage}>Заменить</Text>
@@ -138,13 +176,13 @@ export default function NewPosts() {
         />
 
       </ScrollView>
-
+      <VisibilityModal visible={isModalOpen} selected={visibility} onSelect={(opt) => setVisibility(opt)} onClose={() => setIsModalOpen(false)} />
       {/* Нижняя кнопка публикации */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.publishButton} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.publishButton} activeOpacity={0.8} onPress={OnPressPublishBtn}>
           <Text style={styles.publishButtonText}>Опубликовать</Text>
         </TouchableOpacity>
-        <Text style={styles.footerSubtext}>Пост увидят все пользователи Искры</Text>
+        <Text onPress={() => setIsModalOpen(true)} style={styles.footerSubtext}>Пост увидят все пользователи Искры</Text>
       </View>
     </SafeAreaView>
   );
