@@ -5,6 +5,8 @@ import { supabase } from '../../utils/supabase/supabase';
 
 
 export const useCreatePost = () => {
+    console.log('Айпи сервака' + process.env.EXPO_);
+    
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<null | string>(null);
 
@@ -33,13 +35,13 @@ export const useCreatePost = () => {
                         contentType: fileData.mimeType || 'image/jpeg',
                         upsert: false,
                     })
-                if(uploadError){
+                if (uploadError) {
                     throw new Error(`Ошибка загрузки в Supabase: ${uploadError.message}`)
                 }
 
-                const {data: publicUrlData } = supabase.storage
-                .from('NoticeMe')
-                .getPublicUrl(filePath);
+                const { data: publicUrlData } = supabase.storage
+                    .from('NoticeMe')
+                    .getPublicUrl(filePath);
                 fileUrl = publicUrlData.publicUrl;
                 console.log("Файл успешно загружен. URL:", fileUrl);
             }
@@ -49,18 +51,20 @@ export const useCreatePost = () => {
                 fileUrl: fileUrl,
             };
 
-            const response = await fetch(process.env.API_URL as any, {
+            const response = await fetch(process.env.EXPO_PUBLIC_API_URL as any, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(postPayload)
             });
-            if(!response.ok){
-                throw new Error('Сервер вернул ошибку при создании поста');
+            if (!response.ok) {
+                const errorText = await response.text(); // Читаем, что именно ответил сервер
+                console.log("Ответ бэкенда с ошибкой:", errorText);
+                throw new Error(`Ошибка (${response.status}): ${errorText}`);
             }
         }
-        catch(err: any){
+        catch (err: any) {
             console.error("Error from useCreatePost: ", err);
             setError(err.message);
             throw err;
@@ -68,5 +72,5 @@ export const useCreatePost = () => {
             setIsLoading(false);
         }
     };
-    return {createPost, isLoading, error}
+    return { createPost, isLoading, error }
 }
