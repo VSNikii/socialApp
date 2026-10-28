@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { View } from 'react-native';
-import Feed from './Feed';
+import Login from './auth/Login';
+import Registration from './auth/Registration';
 
 
 export default function Index() {
-
+  const [isAuth, setIsAuth] = useState(false);
 
   return (
     <View style={{ flex: 1 }}>
-      <Feed />
+      {isAuth ? <Login/> : <Registration/>}  
+      {/* <Feed /> */}
     </View>
   );
 }
