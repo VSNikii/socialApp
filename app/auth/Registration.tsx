@@ -18,6 +18,7 @@ export default function Registration() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,18 +53,21 @@ export default function Registration() {
             </View>
 
             {/* Поле: Почта */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Почта</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Введи почту"
-                placeholderTextColor="#9CA3AF"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
+            {/* {emailRegex !== email ? () : */}
+              (<View style={styles.inputGroup}>
+                <Text style={styles.label}>Почта</Text>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Введи почту"
+                  placeholderTextColor="#9CA3AF"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>)
+
 
             {/* Поле: Пароль */}
             <View style={styles.inputGroup}>
