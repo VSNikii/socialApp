@@ -1,22 +1,27 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const onPressToRegister = () => {
+    router.push('/auth/Registration');
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -92,7 +97,7 @@ export default function LoginScreen() {
           <View style={styles.footerContainer}>
             <Text style={styles.footerText}>
               Нет аккаунта?{' '}
-              <Text style={styles.linkText}>Зарегистрироваться</Text>
+              <Text onPress={() => onPressToRegister()} style={styles.linkText}>Зарегистрироваться</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>

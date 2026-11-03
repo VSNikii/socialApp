@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   Keyboard,
@@ -19,6 +20,14 @@ export default function Registration() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const router = useRouter();
+
+  const onPressCreateAcc = () => {
+    router.push('/auth/CodeFromEmail');
+  }
+  const onPressToLogin = () => {
+    router.push('/auth/Login');
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,7 +104,7 @@ export default function Registration() {
             </View>
 
             {/* Кнопка Создать аккаунт */}
-            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8} onPress={() => onPressCreateAcc()}>
               <Text style={styles.primaryButtonText}>Создать аккаунт</Text>
             </TouchableOpacity>
 
@@ -110,7 +119,7 @@ export default function Registration() {
           {/* Футер */}
           <View style={styles.footerContainer}>
             <Text style={styles.footerText}>
-              Уже есть аккаунт? <Text style={styles.linkText}>Войти</Text>
+              Уже есть аккаунт? <Text style={styles.linkText} onPress={() => onPressToLogin()}>Войти</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>
