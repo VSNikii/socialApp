@@ -1,3 +1,4 @@
+import useAuth from '@/hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -17,16 +18,43 @@ import {
 export default function Registration() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const router = useRouter();
+  const auth = useAuth();
 
-  const onPressCreateAcc = () => {
-    router.push('/auth/CodeFromEmail');
+  const onPressCreateAcc = async () => {
+    console.log('This is work ------------------');
+    setIsLoading(true);
+    try {
+      const isSuccess = await sendData();
+
+      if (isSuccess) {
+        router.push({
+          pathname: '/auth/CodeFromEmail',
+          params: { email: email }
+        });
+      } else {
+        alert('Не удалось отправить данные.');
+      }
+    } catch (err) {
+      return false;
+    } finally {
+      setIsLoading(false); // Выключаем в любом случае
+    }
   }
   const onPressToLogin = () => {
     router.push('/auth/Login');
+  }
+  const sendData = async () => {
+    try {
+      const response = await auth.sendAuthDataOnServer(email, password, name);
+      return response;
+    } catch (err) {
+      console.log('Error from sendData: ' + err);
+    }
   }
 
   return (
@@ -63,19 +91,19 @@ export default function Registration() {
 
             {/* Поле: Почта */}
             {/* {emailRegex !== email ? () : */}
-              (<View style={styles.inputGroup}>
-                <Text style={styles.label}>Почта</Text>
+            (<View style={styles.inputGroup}>
+              <Text style={styles.label}>Почта</Text>
 
-                <TextInput
-                  style={styles.input}
-                  placeholder="Введи почту"
-                  placeholderTextColor="#9CA3AF"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>)
+              <TextInput
+                style={styles.input}
+                placeholder="Введи почту"
+                placeholderTextColor="#9CA3AF"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>)
 
 
             {/* Поле: Пароль */}
@@ -104,7 +132,7 @@ export default function Registration() {
             </View>
 
             {/* Кнопка Создать аккаунт */}
-            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8} onPress={() => onPressCreateAcc()}>
+            <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8} onPress={() => onPressCreateAcc()} disabled={isLoading}>
               <Text style={styles.primaryButtonText}>Создать аккаунт</Text>
             </TouchableOpacity>
 

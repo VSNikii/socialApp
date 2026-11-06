@@ -1,18 +1,18 @@
-import { useCreatePost } from '@/hooks/UseCreatePost/use-create-post';
+import { useCreatePost } from '@/hooks/use-create-post';
 import { VisibilityModal, VisibilityOption } from '@/myComponents/VisibilityPosts';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 export default function NewPosts() {

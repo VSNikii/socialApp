@@ -46,10 +46,6 @@ run();
 //         res.status(500).json({ error: 'Ошибка сервера при получении постов' });
 //     }
 // });
-
-
-module.exports = pool;
-
 // 2. Эндпоинт для создания нового поста (POST)
 app.post('/posts', async (req, res) => {
     console.log('--- ПОЛУЧЕНЫ ДАННЫЕ С МОБИЛКИ ---');
@@ -61,6 +57,22 @@ app.post('/posts', async (req, res) => {
         receivedData: req.body
     });
 });
+
+app.post('/auth', async (req, res) => {
+    console.log("ПОЛУЧЕНЫ ДАННЫЕ АВТОРИЗАЦИИ");
+    console.log(req.body);
+    
+    return res.status(200).json({
+        message: 'Данные успешно получены сервером',
+        receivedData: req.body
+    });
+    
+    
+})
+
+module.exports = pool;
+
+
 // Запускаем сервер
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Сервер запущен: http://localhost:${PORT}`);

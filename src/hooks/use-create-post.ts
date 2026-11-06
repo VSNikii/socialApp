@@ -1,7 +1,7 @@
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useState } from "react";
-import { supabase } from '../../utils/supabase/supabase';
+import { supabase } from '../utils/supabase/supabase';
 
 
 export const useCreatePost = () => {
@@ -51,7 +51,7 @@ export const useCreatePost = () => {
                 fileUrl: fileUrl,
             };
 
-            const response = await fetch(process.env.EXPO_PUBLIC_API_URL as any, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts` as any, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
