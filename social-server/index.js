@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 3000;
@@ -59,15 +60,33 @@ app.post('/posts', async (req, res) => {
 });
 
 app.post('/auth', async (req, res) => {
-    console.log("ПОЛУЧЕНЫ ДАННЫЕ АВТОРИЗАЦИИ");
-    console.log(req.body);
-    
-    return res.status(200).json({
-        message: 'Данные успешно получены сервером',
-        receivedData: req.body
-    });
-    
-    
+    try {
+        const { email, password, fullName } = req.body;
+
+        if (!email || !password || !fullName) {
+            return res.status(400).json({ message: 'Заполните все поля' });
+        }
+        const saltRounds = 10;
+
+        const hashedPasswords = await bcrypt.hash(password, saltRounds);
+        const verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
+        const values = [email, hashedPasswords, fullName, verificationCode]
+        const query = `INSERT INTO verification_codes (email, password, name, code) 
+    VALUES ($1, $2, $3, $4)`;
+        const result = await pool.query(query, values);
+        return res.status(200).json({
+            success: true,
+            message: 'Код верификации создан',
+        });
+
+
+    } catch (err) {
+        console.error('Error from post auth: ' + err.message);
+        return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+
+
+
 })
 
 module.exports = pool;

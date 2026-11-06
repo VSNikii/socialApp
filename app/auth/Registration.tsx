@@ -1,3 +1,4 @@
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import useAuth from '@/hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -26,23 +27,27 @@ export default function Registration() {
   const auth = useAuth();
 
   const onPressCreateAcc = async () => {
-    console.log('This is work ------------------');
+    console.log('Попытка создания аккаунта для:', email);
     setIsLoading(true);
-    try {
-      const isSuccess = await sendData();
 
-      if (isSuccess) {
+    try {
+      const response = await sendData();
+      console.log('Результат sendData:', response);
+      setIsLoading(false);
+      if (response) {
+        // Выключаем загрузку ПЕРЕД переходом
         router.push({
           pathname: '/auth/CodeFromEmail',
           params: { email: email }
         });
       } else {
-        alert('Не удалось отправить данные.');
+        setIsLoading(false);
+        alert('Не удалось отправить данные. Возможно, email уже занят.');
       }
     } catch (err) {
-      return false;
-    } finally {
-      setIsLoading(false); // Выключаем в любом случае
+      setIsLoading(false);
+      console.error('Ошибка в onPressCreateAcc:', err);
+      alert('Произошла ошибка при соединении с сервером');
     }
   }
   const onPressToLogin = () => {
@@ -59,6 +64,7 @@ export default function Registration() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <LoadingOverlay visible={isLoading} message='Создаем аккаунт...' />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -89,9 +95,7 @@ export default function Registration() {
               />
             </View>
 
-            {/* Поле: Почта */}
-            {/* {emailRegex !== email ? () : */}
-            (<View style={styles.inputGroup}>
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>Почта</Text>
 
               <TextInput
@@ -103,7 +107,7 @@ export default function Registration() {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-            </View>)
+            </View>
 
 
             {/* Поле: Пароль */}
