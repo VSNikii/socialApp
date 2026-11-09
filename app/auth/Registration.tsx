@@ -27,22 +27,27 @@ export default function Registration() {
   const auth = useAuth();
 
   const onPressCreateAcc = async () => {
-    console.log('Попытка создания аккаунта для:', email);
-    setIsLoading(true);
+
 
     try {
-      const response = await sendData();
-      console.log('Результат sendData:', response);
-      setIsLoading(false);
-      if (response) {
-        // Выключаем загрузку ПЕРЕД переходом
-        router.push({
-          pathname: '/auth/CodeFromEmail',
-          params: { email: email }
-        });
-      } else {
+      if (emailRegex.test(email) && name && password) {
+        console.log('Попытка создания аккаунта для:', email);
+        setIsLoading(true);
+        const response = await sendData();
+        console.log('Результат sendData:', response);
         setIsLoading(false);
-        alert('Не удалось отправить данные. Возможно, email уже занят.');
+        if (response) {
+          // Выключаем загрузку ПЕРЕД переходом
+          router.push({
+            pathname: '/auth/CodeFromEmail',
+            params: { email: email }
+          });
+        } else {
+          setIsLoading(false);
+          alert('Не удалось отправить данные. Возможно, email уже занят.');
+        }
+      } else {
+        alert('Неправильный заполнены данные');
       }
     } catch (err) {
       setIsLoading(false);
